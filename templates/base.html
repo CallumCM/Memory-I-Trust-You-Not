@@ -26,9 +26,9 @@
     <link rel="stylesheet" href="/static/styles/contextMenu.css" />
   </head>
   <body>
-    <label class="checkbox-label" 
-           for="color-mode"
-           style="display:absolute;top:5px;left:5px;">
+    <label id="color-mode-container"
+           class="checkbox-label" 
+           for="color-mode">
       Dark Mode
       <input id="color-mode" type="checkbox" name="color-mode">
       <span class="checkmark"></span>
@@ -36,7 +36,7 @@
     {% block content %}{% endblock %}
     <div id="context-menu" class="context-menu" style="display:none">
       <ul>
-        <li onclick="contextCopy();"><a href="#">Copy</a></li>
+        <li onclick="contextCopy();">Copy</li>
         {% block contextMenu %}{% endblock %}
       </ul>
     </div>

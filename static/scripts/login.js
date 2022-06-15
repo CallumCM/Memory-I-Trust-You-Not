@@ -23,7 +23,7 @@
       }
       window.removeEventListener('message', authComplete);
       authWindow.close();
-      location.reload();
+      location.replace('/')
     }
   }
   script.parentNode.insertBefore(button, script);

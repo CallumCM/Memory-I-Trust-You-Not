@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans&display=swap');
 :root {
   --primary: #391919;
-  --secondary: #163739;
+  --secondary: #0e2c3e;
   --accent: #d37e9e;
   --background: #22232f;
 }
@@ -97,4 +97,8 @@ label.checkbox-label .checkmark:after {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+}
+.vanish {
+  opacity: 0;
+  pointer-events: none;
 }

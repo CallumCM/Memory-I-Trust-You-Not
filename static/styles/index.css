@@ -9,16 +9,24 @@
   padding: 10px;
   max-width: calc((var(--note-size) + var(--note-spacing)) * var(--notes-per-row) + var(--note-spacing));
 }
+@media only screen and (max-width: 1000px) {
+  .notes {
+    --note-size: 8rem;
+    --notes-per-row: 2;
+    --note-spacing: 2rem;
+    --note-padding: 3px;
+  }
+}
 .notes > * {
   margin: 0 auto var(--note-spacing) auto;
   background-color: var(--secondary);
-  border: 1px solid var(--accent);
+  border: 2px solid var(--secondary);
   padding: var(--note-padding);
   font-size: 30px;
   text-align: center;
+  vertical-align: middle;
   width: var(--note-size);
   height: var(--note-size);
-  text-align: center;
   vertical-align: middle;
   border-radius: 5px;
   transition: 0.2s;
@@ -28,6 +36,7 @@
   padding: calc(var(--note-padding) * 2);
   box-shadow: 2px 6px 9px rgba(0, 0, 0, 0.4);
   cursor: pointer;
+  border: 2px solid var(--accent);
 }
 .notes > *:active {
   transition: 0.2s;
