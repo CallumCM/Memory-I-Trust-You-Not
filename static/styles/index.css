@@ -29,18 +29,15 @@
   height: var(--note-size);
   vertical-align: middle;
   border-radius: 5px;
-  transition: 0.2s;
+  user-select: none;
 }
 .notes > *:hover {
-  transition: 0.2s;
   padding: calc(var(--note-padding) * 2);
   box-shadow: 2px 6px 9px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   border: 2px solid var(--accent);
 }
 .notes > *:active {
-  transition: 0.2s;
-  padding: calc(var(--note-padding) * 2);
-  box-shadow: 2px 6px 9px rgba(0, 0, 0, 0.4);
-  cursor: pointer;
+  padding: calc(var(--note-padding) * 3);
+  box-shadow: 2px 6px 27px rgba(0, 0, 0, 0.4);
 }

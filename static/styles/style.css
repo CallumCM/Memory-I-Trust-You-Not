@@ -12,11 +12,18 @@
   -webkit-transition: 0.2s;
 }
 button {
+  --size: 0.5rem;
   display: block;
   background-color: var(--background);
   border: 1px solid var(--accent);
-  padding: 0.5rem;
+  padding: var(--size);
   border-radius: 4px;
+}
+button:active::before {
+  background-color: var(--secondary);
+}
+button:active {
+  padding: calc(var(--size) * 1.2);
 }
 button::before {
   content: '';

@@ -52,20 +52,22 @@ always_allowed = (
 @app.before_request
 def before_request():
   if not web.auth.is_authenticated and not request.path in always_allowed:
-    return render_template('login.html')
-  elif not web.auth.name in permitted:
+      return render_template('login.html')
+  elif web.auth.is_authenticated and not web.auth.name in permitted:
     abort(403, 'You are not permitted to access this software')
 
 @app.after_request
 def after_request(response):
   minifiers = {
-    'text/html': htmlmin,
-    'text/css': cssmin,
-    'text/javascript': jsmin,
-    'application/x-javascript': jsmin,
+    'text/html': ('html', htmlmin),
+    'text/css': ('css', cssmin),
+    'text/javascript': ('js', jsmin),
+    'application/javascript': ('js', jsmin),
+    'application/x-javascript': ('js', jsmin),
   }
-  minify = minifiers.get(response.mimetype, None)
-  if minify:
+  minify_data = minifiers.get(response.mimetype, None)
+  if minify_data:
+    minify = minify_data[1]
     response.direct_passthrough = False
     response.set_data(minify(response.get_data(True)))
     return response
