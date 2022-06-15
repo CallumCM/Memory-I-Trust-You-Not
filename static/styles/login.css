@@ -1,0 +1,9 @@
+#replit-auth-button {
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 5rem;
+  font-size: 3rem;
+}
