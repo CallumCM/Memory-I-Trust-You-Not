@@ -20,8 +20,14 @@ document.addEventListener('contextMenuHideOkay', () => {
 });
 
 function openContextMenu(e) {
-  recordSelected();
   e.preventDefault();
+  recordSelected();
+  document.dispatchEvent(new CustomEvent('contextopen', {
+    detail: {
+      x: e.pageX,
+      y: e.pageY
+    }
+  }));
   let menu = document
     .getElementById("context-menu");
   menu.style.display = 'block';
@@ -47,6 +53,6 @@ function recordSelected() {
 function contextCopy() {
   navigator.clipboard.writeText(clipboardText)
     .catch(err => {
-      console.log(err);
+      console.error(err);
     });
 }

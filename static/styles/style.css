@@ -14,33 +14,20 @@
 button {
   --size: 0.5rem;
   display: block;
-  background-color: var(--background);
+  position: relative;
+  overflow: hidden;
+  background: transparent;
   border: 1px solid var(--accent);
   padding: var(--size);
   border-radius: 4px;
+  transition: 0.4s;
 }
-button:active::before {
-  background-color: var(--secondary);
+button:hover {
+  cursor: pointer;
+  box-shadow: inset 0 -3.25em 0 0 var(--accent);
 }
 button:active {
-  padding: calc(var(--size) * 1.2);
-}
-button::before {
-  content: '';
-  position: absolute;
-  background: var(--accent);
-  bottom: 0;
-  left: 0;
-  right: 0;
-  top: 100%;
-  z-index: -1;
-  -webkit-transition: top 0.2s;
-  transition: top 0.2s;
-}
-button:hover::before {
-  top: 0;
-  transition: 0.2s;
-  -webkit-transition: 0.2s;
+  box-shadow: inset 0 -3.25em 0 0 var(--secondary);
 }
 body {
   background-color: var(--background);

@@ -8,3 +8,9 @@
   font-size: 6rem;
   white-space:nowrap;
 }
+@media only screen and (max-width: 1000px) {
+  #replit-auth-button {
+    --size: 1rem;
+    font-size: 6vw;
+  }
+}

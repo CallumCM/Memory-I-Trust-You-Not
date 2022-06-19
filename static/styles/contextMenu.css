@@ -1,35 +1,37 @@
 .context-menu {
-  position: absolute;
+  position: fixed;
   text-align: center;
   background: none;
+  z-index: 100;
 }
 .context-menu ul {
-  padding: 0px;
+  padding: 1px;
   margin: 0px;
   min-width: 150px;
   list-style: none;
   z-index: 10;
-  background: var(--background);
+  background-color: var(--accent);
   border-radius: 4px;
+  box-shadow: 2px 6px 9px rgba(0, 0, 0, 0.4);
 }
 .context-menu ul li {
-  padding-bottom: 7px;
-  padding-top: 7px;
+  padding: 7px;
   border: 1px solid var(--accent);
   border-radius: 4px;
-  transition: 0.1s background;
+  background-color: var(--background);
+  transition: 0.2s background;
 }
 .context-menu ul li > * {
   text-decoration: none;
   color: var(--primary);
-  transition: 0.1s color;
+  transition: 0.2s color;
 }
 .context-menu ul li:hover > * {
   color: var(--background);
-  transition: 0.1s color;
+  transition: 0.2s color;
 }
 .context-menu ul li:hover {
   cursor: pointer;
   background: var(--accent);
-  transition: 0.1s background;
+  transition: 0.2s background;
 }

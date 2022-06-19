@@ -2,6 +2,7 @@ from replit import web, db
 import os
 import json
 import uuid
+from urllib.parse import unquote
 from pathlib import Path
 from image import convert_to_webp
 from htmlmin import minify as htmlmin
@@ -39,6 +40,7 @@ ratelimit = web.per_user_ratelimit(
 permitted = (
   'turnip123',
   'JonahKC',
+  'SucculentCatus',
 )
 always_allowed = (
   '/static/styles/style.css',
@@ -78,6 +80,18 @@ def after_request(response):
 def index():
   return render_template('index.html')
 
+@app.route('/note/<note_name>')
+def view_note(note_name):
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(filepath):
+    note_name = unquote(note_name)
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
+    if note_name in old_json:
+      return render_template('note.html', 
+                             note_name=note_name,
+                             note_content=old_json[note_name])
+  abort(404, 'Note Not Found') 
+
 @app.route('/download/<path:path>')
 def download(path):
   return send_from_directory('uploads', path)
@@ -86,42 +100,66 @@ def download(path):
 def list_downloads():
   return db.to_primitive(users.current['images'])
 
-@app.route('/note/create', methods=['POST'])
-@web.params("name")
+@app.route('/note', methods=['POST'])
+@web.params('name')
 def create_note(name):
-  if web.auth.name in os.listdir('./notes'):
-    old_json = json.load(f'./notes/{web.auth.name}')
+  name = unquote(name)
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(f'./notes/{web.auth.name}.json'):
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
   else:
-    Path(f'./notes/{web.auth.name}').write_text('{}', encoding='utf-8')
-    old_json = json.load(f'./notes/{web.auth.name}')
-  
+    old_json = {}
   if not name in old_json:
     old_json[name] = ""
+    
+  Path(filepath).write_text(json.dumps(old_json), 'utf-8')
+  return {'success': True}
 
-@app.route('/note/edit', methods=['PATCH'])
+@app.route('/note', methods=['DELETE'])
+@web.params('name')
+def delete_note(name):
+  name = unquote(name)
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(f'./notes/{web.auth.name}.json'):
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
+  else:
+    old_json = {}
+  if name in old_json:
+    del old_json[name]
+    
+  Path(filepath).write_text(json.dumps(old_json), 'utf-8')
+  return {'success': True}
+
+@app.route('/note', methods=['PATCH'])
 @web.params("name", "text")
 def edit_note(name, text):
-  if web.auth.name in os.listdir('./notes'):
-    old_json = json.load(f'./notes/{web.auth.name}')
-    if name in old_json:
-      old_json[name] = text
-      return
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(filepath):
+    name = unquote(name)
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
+    old_json[name] = text
+    Path(filepath).write_text(json.dumps(old_json), 'utf-8')
+    return {'success': True}
+    
   abort(404, 'Note Not Found')
 
 @app.route('/note/fetch', methods=['POST'])
 @web.params("name")
 def fetch_note(name):
-  if web.auth.name in os.listdir('./notes'):
-    old_json = json.load(f'./notes/{web.auth.name}')
+  name = unquote(name)
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(filepath):
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
     if name in old_json:
-      return old_json[name]
+      return '"' + old_json[name] + '"' if old_json[name] != '' else '\"\"'
   abort(404, 'Note Not Found') 
 
-@app.route('/note/list', methods=['GET'])
+@app.route('/note/list')
 def list_notes():
-  if web.auth.name in os.listdir('./notes'):
-    old_json = json.load(f'./notes/{web.auth.name}')
-    return tuple(old_json.keys())
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(filepath):
+    old_json = json.loads(Path(filepath).read_text('utf-8'))
+    return json.dumps(list(old_json.keys()))
   return '[]'
 
 @app.route('/upload', methods=['POST'])
@@ -131,6 +169,7 @@ def upload():
   
   if not 'images' in users.current:
     users.current['images'] = []
+    
   f.save(f'./uploads/{image_uuid}')
   
   image_path = Path(f'./uploads/{image_uuid}')

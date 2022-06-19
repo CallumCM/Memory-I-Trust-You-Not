@@ -21,9 +21,6 @@
     <meta property="twitter:description"
           content="NotesApp is a cross platform web-based notes app designed by Callum, because he didn't like that Apple notes doesn't let you upload files from the browser and there's no PC app.">
     <meta property="twitter:image" content="/static/images/favicon.webp">
-
-    <script src="/static/scripts/theme.js"></script>
-    <link rel="stylesheet" href="/static/styles/contextMenu.css" />
   </head>
   <body>
     <label id="color-mode-container"
@@ -41,5 +38,8 @@
       </ul>
     </div>
     <script src="/static/scripts/contextMenu.js"></script>
+    <script src="/static/scripts/theme.js"></script>
+    <link rel="stylesheet" href="/static/styles/contextMenu.css" />
+    {% block scripts %}{% endblock %}
   </body>
 </html>

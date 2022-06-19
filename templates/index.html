@@ -3,21 +3,30 @@
 
 {% block content %}
 <link rel="stylesheet" href="/static/styles/index.css" />
+<link rel="stylesheet" href="/static/styles/modal.css" />
+
 <h1 class="center">NotesApp</h1>
-<div class="notes">
-  <div><span class="note-title">Note 1</span></div>
-  <div><span class="note-title">Note 2</span></div>
-  <div><span class="note-title">Note 3</span></div>
-  <div><span class="note-title">Note 4</span></div>
-  <div><span class="note-title">Note 5</span></div>
-  <div><span class="note-title">Note 6</span></div>
-  <div><span class="note-title">Note 7</span></div>
-  <div><span class="note-title">Note 8</span></div>
-  <div><span class="note-title">Note 9</span></div>
-  <div><span class="note-title">Note 10</span></div>
+<div class="notes" id="notes">
+  <div class="note"><span class="note-title">Note 1</span></div>
+  <div id="new-note">+</div>
+</div>
+
+<div id="new-note-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <label>What should your new note be called?</label><br>
+    <input type="text" placeholder="All My Secrets" id="new-note-modal-name" />
+    <button id="new-note-modal-create" style="margin-top: 1rem;">Ready to Write</button>
+  </div>
 </div>
 {% endblock %}
 
 {% block contextMenu %}
-<li id="copy-note-name" onclick="">Copy Note Name</li>
+<li id="copy-note-name" onclick="copyNoteName()">Copy Note Name</li>
+<li id="delete-note" onclick="deleteNote()">Delete Note</li>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/scripts/note.js"></script>
+<script src="/static/scripts/index.js"></script>
 {% endblock %}
