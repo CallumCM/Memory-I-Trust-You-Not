@@ -13,11 +13,9 @@
 
 .modal-content {
   position: absolute;
-  top: calc(40vh - 40%);
-  left: calc(50vw - 40%);
-  
+  top: 50%; right: 50%;
+  transform: translate(50%,-50%);
   background-color: var(--background);
-  margin: 15% auto;
   padding: 1rem;
   width: 80%;
   min-height: 30%;
@@ -29,12 +27,25 @@
   flex-direction: column;
 }
 
+@media only screen and (max-width: 1000px) {
+  .modal-content > label {
+    word-wrap: break-word;
+    margin-right: 4rem;
+  }
+}
+
+.modal-content > * {
+  color: var(--primary);
+  font-size: clamp(3vw, 1rem, 4rem);
+}
+
 .close {
   display:block;
   position:absolute;
-  top: -10px;
-  right: 20px;
-  
+  top: 0;
+  right: 0;
+  margin-top: -2rem;
+  padding: 0;
   text-decoration:none;
   
   color: #af2c2c;

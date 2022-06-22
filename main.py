@@ -40,7 +40,7 @@ ratelimit = web.per_user_ratelimit(
 permitted = (
   'turnip123',
   'JonahKC',
-  'SucculentCatus',
+  'SucculentCactus',
 )
 always_allowed = (
   '/static/styles/style.css',
@@ -58,7 +58,7 @@ def before_request():
   elif web.auth.is_authenticated and not web.auth.name in permitted:
     abort(403, 'You are not permitted to access this software')
 
-@app.after_request
+#@app.after_request
 def after_request(response):
   minifiers = {
     'text/html': ('html', htmlmin),

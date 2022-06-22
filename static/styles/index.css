@@ -9,7 +9,6 @@
   padding: 10px;
   max-width: calc((var(--note-size) + var(--note-spacing)) * var(--notes-per-row) + var(--note-spacing));
 }
-
 @media only screen and (max-width: 1000px) {
   .notes {
     --note-size: 8rem;
@@ -18,7 +17,6 @@
     --note-padding: 3px;
   }
 }
-
 .notes > *:first-child {
   display: none;
 }
@@ -54,27 +52,17 @@
   cursor: pointer;
   border: 2px solid var(--accent);
 }
-
 .notes > *:active {
   padding: calc(var(--note-padding) * 3);
   box-shadow: 2px 6px 20px rgba(0, 0, 0, 0.4);
 }
-
-label {
-  font-size: 2rem;
-  color: var(--primary);
-}
 input[type="text"] {
-  font-size: 2rem;
-  color: var(--primary);
   background-color: var(--background);
   border-radius: 4px;
   outline: none;
   border: 2px solid var(--primary);
-  width: 34rem;
+  width: 55%;
 }
 #new-note-modal-create {
   padding: 1rem 2rem;
-  font-size: 2rem;
-  width: 34rem;
 }

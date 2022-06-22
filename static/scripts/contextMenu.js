@@ -15,7 +15,6 @@ document.addEventListener('contextMenuHook', () => {
 document.addEventListener('contextMenuHideOkay', () => {
   document.getElementById(
     "context-menu").style.display = "none";
-
   contextOpen = false;
 });
 
