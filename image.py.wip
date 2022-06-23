@@ -1,0 +1,55 @@
+from PIL import Image
+from flask import request, send_from_directory
+from replit import web, db
+from pathlib import Path
+import uuid
+import os
+
+users = web.UserStore()
+
+non_webp_images = (
+  'png',
+  'jpg',
+  'jpeg',
+)
+
+def convert_to_webp(source, destination):
+    """Convert image to WebP.
+
+    Args:
+        source (pathlib.Path): Path to source image
+
+    Returns:
+        pathlib.Path: path to new image
+    """
+    image = Image.open(source)
+    image.save(destination, format="webp")
+    os.remove(source)
+    return destination
+
+def init(app):
+  @app.route('/upload', methods=['POST'])
+  def upload():
+    f = request.files['file']
+    image_uuid = uuid.uuid4().hex
+    
+    if not 'images' in users.current:
+      users.current['images'] = []
+      
+    f.save(f'./uploads/{image_uuid}')
+    
+    image_path = Path(f'./uploads/{image_uuid}')
+    
+    if f.filename.rpartition('.')[2].lower() in non_webp_images:
+      convert_to_webp(image_path, image_path)
+    
+    users.current['images'].append(image_uuid) 
+    return '/'
+
+  @app.route('/download/<path:path>')
+  def download(path):
+    return send_from_directory('uploads', path)
+  
+  @app.route('/download/list')
+  def list_downloads():
+    return db.to_primitive(users.current['images'])

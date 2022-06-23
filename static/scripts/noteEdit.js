@@ -17,12 +17,15 @@ const editorOptions = [
   ['clean'] // remove formatting button
 ];
 
+Quill.register('modules/blotFormatter', QuillBlotFormatter.default);
+
 const editor = new Quill('#editor', {
   modules: {
-    toolbar: editorOptions,
-    imageDrop: true
+    'toolbar': editorOptions,
+    'imageDrop': true,
+    'blotFormatter': {}
   },
-  theme: 'snow',
+  theme: 'snow'
 });
 
 const saved = document.getElementById('saved');
@@ -33,17 +36,22 @@ const currentNote = new Note(
   editor.root.innerHTML
 );
 
-// Hook into our copy function and add QuillJS compatibility
-// like mixins but for the web browser
+// Hook into our copy function to add support for the QuillJS editor
 ((oldContextCopy) => {
   contextCopy = () => {
-    let selection = editor.getSelection();
+    const selection = editor.getSelection(true);
     if (selection) {
-      selection = editor.getText(selection.index, selection.length);
-        navigator.clipboard.writeText(selection)
+      const contentDelta = editor.getContents(selection.index, selection.length);
+      if (typeof contentDelta.ops[0].insert === 'object' && 'image' in contentDelta.ops[0].insert) {
+        const img = document.createElement('img');
+        img.src = contentDelta.ops[0].insert.image;
+        copyImage(img)
+      } else {
+        navigator.clipboard.writeText(editor.getText(selection.index, selection.length))
           .catch(err => {
             console.error(err);
           });
+      }
     } else {    
       oldContextCopy();
     }
@@ -64,6 +72,8 @@ function copyImage(img) {
 
 async function save() {
   saved.innerText = "(Saved)";
+  savedLast = Date.now();
+  unsavedEdits = 0;
   await currentNote.save();
 }
 
@@ -72,12 +82,19 @@ editor.on('text-change', async (delta, source) => {
   saved.innerText = "(Unsaved)";
   if (unsavedEdits >= 118 || Date.now() - savedLast > 5000) {
     await save();
-    savedLast = Date.now();
-    unsavedEdits = 0;
   } else {  
     unsavedEdits++;
   }
 });
+
+let savedCopy = editor.root.innerHTML;
+setTimeout(async () => {
+  await save();
+}, 3000);
+
+document.getElementById('saved').onclick = async () => {
+  await save();
+};
 
 document.addEventListener('keydown', async e => {
   if (e.ctrlKey && e.key === 's') {

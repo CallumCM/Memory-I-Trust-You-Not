@@ -3,6 +3,7 @@
   text-align: center;
   background: none;
   z-index: 100;
+  transition: 0.2s;
 }
 .context-menu ul {
   padding: 1px;

@@ -1,3 +1,18 @@
 svg > * {
   stroke: var(--primary) !important;
 }
+#saved {
+  display: inline-block;
+  color: var(--primary);
+  background-color: var(--secondary);
+  padding: 10px;
+  border-radius: 4px;
+  transition: 0.2s color background-color;
+}
+
+#saved:hover {
+  transition: 0.2s color background-color;
+  color: var(--secondary);
+  background-color: var(--primary);
+  cursor: pointer;
+}

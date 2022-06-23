@@ -17,4 +17,5 @@ numpy = "^1.22.2"
 python = "^3.8"
 rcssmin = "^1.1.0"
 replit = "^3.2.4"
+google-api-python-client = "^2.51.0"
 [tool.poetry.dev-dependencies]

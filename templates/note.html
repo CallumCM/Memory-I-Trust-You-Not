@@ -8,7 +8,7 @@
 <link href="https://cdn.quilljs.com/1.0.0/quill.snow.css" rel="stylesheet" />
 
 <a href='/'>Home</a>
-<p style="display: inline-block;color: var(--primary);" id="saved">(Saved)</p>
+<p id="saved">(Saved)</p>
 <div id="editor">
 {{note_content|safe}}
 </div>
@@ -17,6 +17,7 @@
 {% block scripts %}
 <script src="https://cdn.quilljs.com/1.0.0/quill.js"></script>
 <script src="/static/scripts/image-drop.js"></script>
+<script src="/static/scripts/quill-blot-formatter.js"></script>
 
 <script src="/static/scripts/note.js"></script>
 <script src="/static/scripts/noteEdit.js"></script>
