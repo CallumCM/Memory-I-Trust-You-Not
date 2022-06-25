@@ -13,6 +13,7 @@ from flask import (
   abort,
   request,
   redirect,
+  send_file,
 )
 
 app = Flask(__name__)
@@ -39,6 +40,8 @@ always_allowed = (
   '/static/scripts/theme.js',
   '/static/scripts/contextMenu.js',
   '/static/scripts/login.js',
+  '/static/scripts/sw.js',
+  '/static/manifest.json',
 )
 
 @app.before_request
@@ -69,6 +72,10 @@ def after_request(response):
 @app.route('/')
 def index():
   return render_template('index.html')
+
+@app.route('/sw.js')
+def serviceworker():
+  return send_file('./static/scripts/sw.js')
 
 @app.route('/note/')
 @app.route('/note')

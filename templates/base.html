@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>Memory I Trust You Not - {% block title %}{% endblock %}</title>
-    <link rel="icon" href="/static/images/favicon.webp">
+    <link rel="icon" href="/static/icons/icon-128x128.png">
     <link rel="stylesheet" href="/static/styles/style.css" />
     <meta name="description"
           content="Memory I Trust You Not is a cross platform web-based notes app designed by Callum, because he didn't like that Apple notes doesn't let you upload files from the browser and there's no PC app.">
@@ -21,6 +21,19 @@
     <meta property="twitter:description"
           content="Memory I Trust You Not is a cross platform web-based notes app designed by Callum, because he didn't like that Apple notes doesn't let you upload files from the browser and there's no PC app.">
     <meta property="twitter:image" content="/static/images/favicon.webp">
+
+    <link rel="manifest" href="/static/manifest.json">
+    <script>
+      window.addEventListener('load', async () => {
+        if('serviceWorker' in navigator) {
+          try {
+            await navigator.serviceWorker.register('/sw.js');
+          } catch (e) {
+            console.log(`ServiceWorker registration failed...\n${e}`);
+          }
+        }
+      });
+    </script>
   </head>
   <body>
     <label id="color-mode-container"
