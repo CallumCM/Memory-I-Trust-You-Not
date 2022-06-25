@@ -12,7 +12,10 @@ let indexFunctions;
   let note_element;
   for (let name of notes) {
     note_element = note_template.cloneNode(true);
-    note_element.children[1].innerText = decodeURIComponent (name);
+    // http://www.leakon.com/archives/865
+    note_element.children[1].innerText = decodeURIComponent(name)
+      .replace(/%2F/g, '/')
+      .replace(/%5C/g, '\\');
     note_container.insertBefore(note_element, new_note);
   }
 
@@ -63,12 +66,18 @@ let indexFunctions;
   create_note.onclick = async () => {
     modal.classList.remove('active');
   
-    await Note.create(encodeURIComponent(new_note_name.value));
+    // http://www.leakon.com/archives/865
+    await Note.create(encodeURIComponent(new_note_name.value)
+      .replace(/%2F/g, '%252F')
+      .replace(/%5C/g, '%255C'));
 
     note_element = note_template.cloneNode(true);
     note_element.children[1].innerText = new_note_name.value;
     note_element.onclick = () => {
-      location.replace('/note/'+encodeURIComponent(new_note_name.value));
+      // http://www.leakon.com/archives/865
+      location.replace('/note/'+encodeURIComponent(new_note_name.value)
+        .replace(/%2F/g, '%252F')
+        .replace(/%5C/g, '%255C'));
     };
     note_container.insertBefore(note_element, new_note);
   };
@@ -81,7 +90,10 @@ let indexFunctions;
   
   Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
     note.onclick = () => {
-      location.replace('/note/'+encodeURIComponent(note.children[1].innerText));
+      // http://www.leakon.com/archives/865
+      location.replace('/note/'+encodeURIComponent(note.children[1].innerText)
+        .replace(/%2F/g, '%252F')
+        .replace(/%5C/g, '%255C'));
     };
   });
   

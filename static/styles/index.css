@@ -83,7 +83,6 @@ input[type="text"] {
   position: relative;
   margin-bottom: auto;
   margin-left: auto;
-  z-index: 2;
   background-color: rgba(0, 0, 0, 0);
   transition: 0.2s background-color;
   border: 2px solid var(--accent);
