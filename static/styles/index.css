@@ -37,7 +37,7 @@
   background-color: var(--secondary);
   border: 2px solid var(--secondary);
   padding: var(--note-padding);
-  font-size: 30px;
+  font-size: calc((2vw + 3vh) / 1.75);
   width: var(--note-size);
   height: var(--note-size);
   border-radius: 5px;
@@ -65,6 +65,9 @@
   box-shadow: 2px 6px 9px rgba(0, 0, 0, 0.4);
   cursor: pointer;
   border: 2px solid var(--accent);
+}
+.notes > *:active > span {
+  width: calc(100% - var(--note-padding) * 6);
 }
 .notes > *:active {
   padding: calc(var(--note-padding) * 3);
@@ -103,6 +106,7 @@ input[type="text"] {
   float: right;
   position: relative;
   margin: auto;
+  margin-right: 4px;
   background-color: rgba(0, 0, 0, 0);
   transition: 0.2s background-color;
   border: 2px solid var(--accent);

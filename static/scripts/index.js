@@ -94,16 +94,23 @@ let indexFunctions;
     }
   });
   
-  Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
-    note.onclick = () => {
-      location.href = '/note/'+encodeURIComponent(note.children[NOTE_TITLE_INDEX].innerText);
-    };
-  });
+  Array.from(document
+      .getElementsByClassName('note'))
+    .slice(1).map(note => {
+      note.onclick = () => {
+        location.href = '/note/' +
+          encodeURIComponent(note
+            .children[
+              NOTE_TITLE_INDEX]
+            .innerText);
+      };
+    });
   
-  function copyNoteName() {
+  async function copyNoteName() {
     if (currentlyHoveredNote) {
-      navigator.clipboard.writeText(currentlyHoveredNote.children[NOTE_TITLE_INDEX].innerText)
-        .catch(err => {
+      await navigator.clipboard.writeText(
+        currentlyHoveredNote.children[NOTE_TITLE_INDEX].innerText
+      ).catch(err => {
           console.error(err);
         });
     }
@@ -120,31 +127,54 @@ let indexFunctions;
 
   async function renameNote() {
     if (currentlyHoveredNote) {
-      let newName = prompt('What should your note be called?')
+      let newName = prompt(
+        'What should your note be called?'
+        )
       if (newName) {
-        currentlyHoveredNote.children[NOTE_TITLE_INDEX].innerText = await (new Note(
-          encodeURIComponent(
-            currentlyHoveredNote
-            .children[NOTE_TITLE_INDEX].innerText))).rename(
-          );
+        currentlyHoveredNote
+          .children[NOTE_TITLE_INDEX]
+          .innerText = decodeURIComponent(await (
+            new Note(
+              encodeURIComponent(
+                currentlyHoveredNote
+                .children[
+                  NOTE_TITLE_INDEX]
+                .innerText)))
+          .rename(encodeURIComponent(newName)));
       }
     }
   }
 
-  async function renameNoteButton(e) {
-    e.stopImmediatePropagation();
+  Array.from(document.getElementsByClassName('delete-note')).map(delete_note => {
+    delete_note.onclick = async e => {
+      e.stopImmediatePropagation();
+      if (confirm("Delete this note?")) {
+        currentlyHoveredNote = delete_note.parentNode;
+        await deleteNote();
+      }
+    };
+  });
+  Array.from(document.getElementsByClassName('rename-note')).map(rename_note => {
+    rename_note.onclick = async e => {
+      e.stopImmediatePropagation();
+      currentlyHoveredNote = rename_note.parentNode;
+      await renameNote();
+    };
+  });
+
+  
+  document.getElementById('copy-note-name').onclick = async e => {
+    getHoveredNote();
+    await copyNoteName();
+  }
+  document.getElementById('rename-note').onclick = async e => {
+    getHoveredNote();
     await renameNote();
   }
-  
-  async function deleteNoteButton(e) {
-    e.stopImmediatePropagation();
+  document.getElementById('delete-note').onclick = async e => {
     if (confirm("Delete this note?")) {
       getHoveredNote();
       await deleteNote();
     }
   }
-
-  return {copyNoteName: copyNoteName, deleteNote: deleteNoteButton, renameNote: renameNoteButton}
-})().then(_indexFunctions => {
-  indexFunctions = _indexFunctions;
-});
+})();
