@@ -52,16 +52,16 @@ let indexFunctions;
   const close_modal = document.getElementsByClassName("close")[0];
   
   open_modal.addEventListener('click', (e) => {
-    modal.style.display = "block";
+    modal.classList.add('active');
   });
   close_modal.addEventListener('click', (e) => {
-    modal.style.display = "none";
+    modal.classList.remove('active');
   });
   
   const new_note_name = document.getElementById("new-note-modal-name");
   const create_note = document.getElementById("new-note-modal-create");
   create_note.onclick = async () => {
-    modal.style.display = "none";
+    modal.classList.remove('active');
   
     await Note.create(new_note_name.value);
 
@@ -75,7 +75,7 @@ let indexFunctions;
   
   window.addEventListener('click', (e) => {
     if (e.target == modal) {
-      modal.style.display = "none";
+      modal.classList.remove('active');
     }
   });
   
@@ -84,6 +84,7 @@ let indexFunctions;
       location.replace('/note/'+note.children[1].innerText);
     };
   });
+  
   function copyNoteName() {
     if (currentlyHoveredNote) {
       navigator.clipboard.writeText(currentlyHoveredNote.children[1].innerText)
@@ -99,6 +100,13 @@ let indexFunctions;
       currentlyHoveredNote.remove();
     }
   }
+  Array.from(document.getElementsByClassName('delete-note'))
+    .map(delete_button => {
+    delete_button.onclick = async e => {
+      e.stopImmediatePropagation();
+      await deleteNote();
+    };
+  });
 
   return {copyNoteName: copyNoteName, deleteNote: deleteNote}
 })().then(_indexFunctions => {

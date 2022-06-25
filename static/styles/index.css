@@ -16,6 +16,9 @@
     --note-spacing: 2rem;
     --note-padding: 3px;
   }
+  #new-note-modal-create {
+    margin-bottom: 4rem;
+  }
 }
 .notes > *:first-child {
   display: none;
@@ -44,7 +47,12 @@
   border-radius: 5px;
   user-select: none;
 }
-.notes > div > span{
+.notes > div > span {
+  max-height: var(--note-size);
+  text-overflow: ellipsis;
+  overflow: hidden;
+  margin-bottom: auto;
+  transform: translate(0, -15px);
   top: -1rem;
 }
 .notes > *:hover {
@@ -68,10 +76,20 @@ input[type="text"] {
 #new-note-modal-create {
   padding: 1rem 2rem;
 }
+
 .delete-note {
   width: 30px;
   height: 30px;
   position: relative;
   margin-bottom: auto;
   margin-left: auto;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0);
+  transition: 0.2s background-color;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+}
+.delete-note:hover {
+  background-color: var(--accent);
+  transition: 0.2s background-color;
 }
