@@ -21,7 +21,7 @@ def init(app):
     image_uuid = uuid.uuid4().hex
     make_user_upload_folder()
     f.save(f'./uploads/{web.auth.name}/{image_uuid}.webp')
-    return f'/download/{image_uuid}'
+    return f'/image/{image_uuid}'
 
   @app.route('/image', methods=['DELETE'])
   @web.params('image_uuid')
