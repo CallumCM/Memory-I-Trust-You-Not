@@ -13,7 +13,7 @@ A note-taking app I wrote to...take notes, because the only cross-platform softw
 Currently due to size limitations of a Repl, and my acute lack of motivation to learn how to use the OneDrive/Google Drive API, I've restricted the website to just myself. If you'd like to run it yourself please follow these instructions:
 
 ### With Replit
-- [![Run on Repl.it](https://repl.it/badge/github/Turnip1234/Memory-I-Trust-You-Not)](https://repl.it/github/Turnip1234/Memory-I-Trust-You-Not)
+[![Run on Repl.it](https://repl.it/badge/github/Turnip1234/Memory-I-Trust-You-Not)](https://repl.it/github/Turnip1234/Memory-I-Trust-You-Not)
 
 ### On a Local Environment, or Server
 - Clone the GitHub
