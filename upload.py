@@ -7,27 +7,18 @@ import os
 import uuid
 
 def purge_unused_images():
-
-  # Huge scary monster to get free space in repl, in megabytes
-  # and then convert it to a percentage of total space from 0-1
-  used_percentage = int(str(subprocess.Popen('du -sh ~/$REPL_SLUG',stdout=subprocess.PIPE, shell=True).communicate()[0].strip(), 'utf-8').split('\t')[0][:-1]) / 1024
-  
-  print("{}% of storage used".format(used_percentage*100))
-
-  if used_percentage > 0.1:
-    for root, dirs, files in os.walk('./uploads'):
-      for file in files:
-        if file.endswith('.webp'):
-          for json_file in os.listdir('./notes'):
-            if json_file.endswith('.json'):
-              with open(f'./notes/{json_file}', 'r') as f:
-                data = f.read()
-                if file[:-5] in data:
-                  continue
-                else:
-                  os.remove(f'./uploads/{json_file[:-5]}/{file}')
-                  print(f'Removed {file}')
-                  break
+  for root, dirs, files in os.walk('./uploads'):
+    for file in files:
+      if file.endswith('.webp'):
+        data = ""
+        for json_file in os.listdir('./notes'):
+          if json_file.endswith('.json'):
+            with open(f'./notes/{json_file}', 'r') as f:
+              data += f.read()
+        if not file[:-5] in data:
+          os.remove(f'./uploads/{json_file[:-5]}/{file}')
+          print(f'Removed {file}')
+          break
 
 FORMAT_TABLE = {
   'jpg': ('JPEG', 'image/jpeg'),
@@ -38,11 +29,18 @@ FORMAT_TABLE = {
 def init(app):
   global FORMAT_TABLE
   
-  purge_unused_images()
-  
   def make_user_upload_folder():
     if not os.path.exists(f'./uploads/{web.auth.name}'):
       os.mkdir(f'./uploads/{web.auth.name}')
+
+  @app.route('/purge')
+  def trigger_purge_unused_images():
+    if web.auth.name in ('turnip123',):
+      # Huge scary monster to get free space in repl, in megabytes
+      initial = int(str(subprocess.Popen('du -sh ~/$REPL_SLUG',stdout=subprocess.PIPE, shell=True).communicate()[0].strip(), 'utf-8').split('\t')[0][:-1])
+      purge_unused_images()
+      final = int(str(subprocess.Popen('du -sh ~/$REPL_SLUG',stdout=subprocess.PIPE, shell=True).communicate()[0].strip(), 'utf-8').split('\t')[0][:-1])
+      return 'Space freed: {}MB'.format(initial - final)
   
   @app.route('/image', methods=['POST'])
   def upload():
