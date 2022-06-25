@@ -63,12 +63,12 @@ let indexFunctions;
   create_note.onclick = async () => {
     modal.classList.remove('active');
   
-    await Note.create(new_note_name.value);
+    await Note.create(encodeURIComponent(new_note_name.value));
 
     note_element = note_template.cloneNode(true);
     note_element.children[1].innerText = new_note_name.value;
     note_element.onclick = () => {
-      location.replace('/note/'+new_note_name.value);
+      location.replace('/note/'+encodeURIComponent(new_note_name.value));
     };
     note_container.insertBefore(note_element, new_note);
   };
@@ -81,7 +81,7 @@ let indexFunctions;
   
   Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
     note.onclick = () => {
-      location.replace('/note/'+note.children[1].innerText);
+      location.replace('/note/'+encodeURIComponent(note.children[1].innerText));
     };
   });
   
@@ -96,7 +96,7 @@ let indexFunctions;
   
   async function deleteNote() {
     if (currentlyHoveredNote) {
-      await (new Note(currentlyHoveredNote.children[1].innerText)).delete();
+      await (new Note(encodeURIComponent(currentlyHoveredNote.children[1].innerText))).delete();
       currentlyHoveredNote.remove();
     }
   }
