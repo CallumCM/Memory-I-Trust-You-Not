@@ -30,8 +30,8 @@ function openContextMenu(e) {
   let menu = document
     .getElementById("context-menu");
   menu.style.display = 'block';
-  menu.style.left = e.pageX + "px";
-  menu.style.top = e.pageY + "px";
+  menu.style.left = e.clientX  + "px";
+  menu.style.top = e.clientY + "px";
   contextOpen = true;
 }
 
