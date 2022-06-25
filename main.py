@@ -1,4 +1,5 @@
 from replit import web
+from urllib.parse import unquote
 import os
 import json
 import upload
@@ -78,7 +79,7 @@ def view_note(note_name):
       old_json = {}
     if note_name in old_json:
       return render_template('note.html', 
-                             note_name=note_name,
+                             note_name=unquote(note_name),
                              note_content=old_json[note_name])
   abort(404, 'Note Not Found') 
 

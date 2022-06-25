@@ -12,7 +12,7 @@ let indexFunctions;
   let note_element;
   for (let name of notes) {
     note_element = note_template.cloneNode(true);
-    note_element.children[1].innerText = name;
+    note_element.children[1].innerText = decodeURI(name);
     note_container.insertBefore(note_element, new_note);
   }
 
