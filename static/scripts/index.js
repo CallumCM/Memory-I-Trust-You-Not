@@ -1,6 +1,8 @@
 let indexFunctions;
 
 (async () => {
+  const NOTE_TITLE_INDEX = 2;
+  
   const notes = await Note.list();
   let currentlyHoveredNote;
   const note_container = document.getElementById('notes');
@@ -13,7 +15,7 @@ let indexFunctions;
   let note_element;
   for (let name of notes) {
     note_element = note_template.cloneNode(true);
-    note_element.children[1].innerText = decodeURIComponent(name);
+    note_element.children[NOTE_TITLE_INDEX].innerText = decodeURIComponent(name);
     note_container.insertBefore(note_element, new_note);
   }
 
@@ -27,6 +29,7 @@ let indexFunctions;
   const noteSpecificContextItems = [
     document.getElementById('copy-note-name'),
     document.getElementById('delete-note'),
+    document.getElementById('rename-note'),
   ];
   function updatePageSpecificContextItems() {
     noteSpecificContextItems.map(contextItem => {
@@ -78,9 +81,9 @@ let indexFunctions;
     await Note.create(encodeURIComponent(new_note_name.value));
 
     note_element = note_template.cloneNode(true);
-    note_element.children[1].innerText = new_note_name.value;
+    note_element.children[NOTE_TITLE_INDEX].innerText = new_note_name.value;
     note_element.onclick = () => {
-      location.replace('/note/'+encodeURIComponent(new_note_name.value));
+      location.href = '/note/'+encodeURIComponent(new_note_name.value);
     };
     note_container.insertBefore(note_element, new_note);
   };
@@ -93,13 +96,13 @@ let indexFunctions;
   
   Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
     note.onclick = () => {
-      location.replace('/note/'+encodeURIComponent(note.children[1].innerText));
+      location.href = '/note/'+encodeURIComponent(note.children[NOTE_TITLE_INDEX].innerText);
     };
   });
   
   function copyNoteName() {
     if (currentlyHoveredNote) {
-      navigator.clipboard.writeText(currentlyHoveredNote.children[1].innerText)
+      navigator.clipboard.writeText(currentlyHoveredNote.children[NOTE_TITLE_INDEX].innerText)
         .catch(err => {
           console.error(err);
         });
@@ -108,23 +111,40 @@ let indexFunctions;
   
   async function deleteNote() {
     if (currentlyHoveredNote) {
-      await (new Note(encodeURIComponent(currentlyHoveredNote.children[1].innerText))).delete();
+      await (new Note(encodeURIComponent(
+        currentlyHoveredNote
+        .children[NOTE_TITLE_INDEX].innerText))).delete();
       currentlyHoveredNote.remove();
     }
   }
-  
-  Array.from(document.getElementsByClassName('delete-note'))
-    .map(delete_button => {
-    delete_button.onclick = async e => {
-      e.stopImmediatePropagation();
-      if (confirm("Delete this note?")) {
-        getHoveredNote();
-        await deleteNote();
-      }
-    };
-  });
 
-  return {copyNoteName: copyNoteName, deleteNote: deleteNote}
+  async function renameNote() {
+    if (currentlyHoveredNote) {
+      let newName = prompt('What should your note be called?')
+      if (newName) {
+        currentlyHoveredNote.children[NOTE_TITLE_INDEX].innerText = await (new Note(
+          encodeURIComponent(
+            currentlyHoveredNote
+            .children[NOTE_TITLE_INDEX].innerText))).rename(
+          );
+      }
+    }
+  }
+
+  async function renameNoteButton(e) {
+    e.stopImmediatePropagation();
+    await renameNote();
+  }
+  
+  async function deleteNoteButton(e) {
+    e.stopImmediatePropagation();
+    if (confirm("Delete this note?")) {
+      getHoveredNote();
+      await deleteNote();
+    }
+  }
+
+  return {copyNoteName: copyNoteName, deleteNote: deleteNoteButton, renameNote: renameNoteButton}
 })().then(_indexFunctions => {
   indexFunctions = _indexFunctions;
 });

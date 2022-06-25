@@ -12,6 +12,7 @@ from flask import (
   render_template,
   abort,
   request,
+  redirect,
 )
 
 app = Flask(__name__)
@@ -47,7 +48,7 @@ def before_request():
   elif web.auth.is_authenticated and not web.auth.name in permitted:
     abort(403, 'You are not permitted to access this software')
 
-@app.after_request
+#@app.after_request
 def after_request(response):
   minifiers = {
     'text/html': ('html', htmlmin),
@@ -68,6 +69,11 @@ def after_request(response):
 @app.route('/')
 def index():
   return render_template('index.html')
+
+@app.route('/note/')
+@app.route('/note')
+def redirect_invalid_note():
+  return redirect('/')
 
 @app.route('/note/<note_name>')
 def view_note(note_name):
@@ -97,6 +103,26 @@ def create_note(name):
   if not name in old_json:
     old_json[name] = ""
     
+  Path(filepath).write_text(json.dumps(old_json), 'utf-8')
+  return {'success': True}
+
+@app.route('/note/rename', methods=['PATCH'])
+@web.params('name', 'new_name')
+def rename_note(name, new_name):
+  filepath = f'./notes/{web.auth.name}.json'
+  if os.path.exists(f'./notes/{web.auth.name}.json'):
+    try:
+      old_json = json.loads(Path(filepath).read_text('utf-8'))
+    except json.decoder.JSONDecodeError:
+      old_json = {}
+  else:
+    old_json = {}
+  if not name in old_json:
+    abort(404, 'Note not found')
+
+  old_json[new_name] = old_json[name]
+  del old_json[name]
+
   Path(filepath).write_text(json.dumps(old_json), 'utf-8')
   return {'success': True}
 

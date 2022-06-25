@@ -87,6 +87,13 @@ class Note {
       return false;
     });
   }
+  async rename(newName) {
+    await apiRequest('/note/rename', {
+      name: this.name,
+      new_name: newName
+    }, 'PATCH')
+    return newName;
+  }
   async delete() {
     await apiRequest('/note', {
       name: this.name

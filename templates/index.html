@@ -9,6 +9,7 @@
 <div class="notes" id="notes">
   <div class="note" id="note-template">
     <img src="/static/images/trash.svg" class="delete-note" />
+    <img src="/static/images/edit.svg" class="rename-note" />
     <span class="note-title">Note 1</span>
   </div>
   <div id="new-note">+</div>
@@ -25,8 +26,12 @@
 {% endblock %}
 
 {% block contextMenu %}
-<li id="copy-note-name" onclick="indexFunctions.copyNoteName()">Copy Note Name</li>
-<li id="delete-note" onclick="indexFunctions.deleteNote()">Delete Note</li>
+<li id="copy-note-name"
+  onclick=indexFunctions.copyNoteName>Copy Note Name</li>
+<li id="rename-note"
+  onclick=indexFunctions.renameNote>Rename Note</li>
+<li id="delete-note"
+  onclick=indexFunctions.deleteNote>Delete Note</li>
 {% endblock %}
 
 {% block scripts %}

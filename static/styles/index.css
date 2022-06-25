@@ -28,6 +28,8 @@
   font-size: 6rem;
   background-color: var(--background);
   color: var(--accent);
+  text-align: center;
+  line-height: var(--note-size);
 }
 
 .notes > * {
@@ -36,24 +38,26 @@
   border: 2px solid var(--secondary);
   padding: var(--note-padding);
   font-size: 30px;
-  display: flex;
-  justify-content: center;
-  align-content: center;
-  flex-direction: column;
-  text-align: center;
   width: var(--note-size);
   height: var(--note-size);
-  vertical-align: middle;
   border-radius: 5px;
   user-select: none;
+  position: relative;
 }
 .notes > div > span {
   max-height: var(--note-size);
   text-overflow: ellipsis;
   overflow: hidden;
-  margin-bottom: auto;
-  transform: translate(0, -15px);
-  top: -1rem;
+  position: absolute;
+  width: calc(100% - var(--note-padding) * 2);
+  text-align: center;
+
+  /* Total width of top buttons (including border) / 2 = 17px */
+  top: calc(50% - 17px - var(--note-padding) / 2);
+}
+.notes > *:hover > span {
+  top: calc(50% - 17px - var(--note-padding));
+  width: calc(100% - var(--note-padding) * 4);
 }
 .notes > *:hover {
   margin-bottom: 0;
@@ -80,6 +84,7 @@ input[type="text"] {
 .delete-note {
   width: 30px;
   height: 30px;
+  float: right;
   position: relative;
   margin-bottom: auto;
   margin-left: auto;
@@ -89,6 +94,21 @@ input[type="text"] {
   border-radius: 4px;
 }
 .delete-note:hover {
+  background-color: var(--accent);
+  transition: 0.2s background-color;
+}
+.rename-note {
+  width: 30px;
+  height: 30px;
+  float: right;
+  position: relative;
+  margin: auto;
+  background-color: rgba(0, 0, 0, 0);
+  transition: 0.2s background-color;
+  border: 2px solid var(--accent);
+  border-radius: 4px;
+}
+.rename-note:hover {
   background-color: var(--accent);
   transition: 0.2s background-color;
 }
