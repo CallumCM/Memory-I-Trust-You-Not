@@ -104,7 +104,8 @@ let indexFunctions;
     .map(delete_button => {
     delete_button.onclick = async e => {
       e.stopImmediatePropagation();
-      await deleteNote();
+      if (confirm("Delete this note?"))
+        await deleteNote();
     };
   });
 
