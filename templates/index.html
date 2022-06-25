@@ -30,6 +30,23 @@
 {% endblock %}
 
 {% block scripts %}
+<script>
+// http://www.leakon.com/archives/865
+((_encodeURIComponent) => {
+  encodeURIComponent = (str) => {
+    return _encodeURIComponent(str)
+      .replace(/%2F/g, '%252F')
+      .replace(/%5C/g, '%255C');
+  };
+})(encodeURIComponent);
+((_decodeURIComponent) => {
+  decodeURIComponent = (str) => {
+    return _decodeURIComponent(str)
+      .replace(/%2F/g, '/')
+      .replace(/%5C/g, '\\');
+  };
+})(decodeURIComponent);
+</script>
 <script src="/static/scripts/note.js"></script>
 <script src="/static/scripts/index.js"></script>
 {% endblock %}

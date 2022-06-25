@@ -1,4 +1,5 @@
 let indexFunctions;
+
 (async () => {
   const notes = await Note.list();
   let currentlyHoveredNote;
@@ -12,12 +13,16 @@ let indexFunctions;
   let note_element;
   for (let name of notes) {
     note_element = note_template.cloneNode(true);
-    // http://www.leakon.com/archives/865
-    note_element.children[1].innerText = decodeURIComponent(name)
-      .replace(/%2F/g, '/')
-      .replace(/%5C/g, '\\');
+    note_element.children[1].innerText = decodeURIComponent(name);
     note_container.insertBefore(note_element, new_note);
   }
+
+  let mouseX, mouseY = 0;
+  function mousemove(e){
+    mouseX = e.pageX;
+    mouseY = e.pageY;
+  }
+  window.addEventListener('mousemove', mousemove);
 
   const noteSpecificContextItems = [
     document.getElementById('copy-note-name'),
@@ -32,10 +37,10 @@ let indexFunctions;
       }
     });
   }
-  
-  document.addEventListener('contextopen', (e) => {
+
+  function getHoveredNote() {
     let isOnNote;
-    let items = Array.from(document.elementsFromPoint(e.detail.x, e.detail.y));
+    let items = Array.from(document.elementsFromPoint(mouseX, mouseY));
     for (let index = 0; index < items.length; index++) {
       if (items[index].className == 'note') {
         isOnNote = index;
@@ -47,7 +52,11 @@ let indexFunctions;
     } else {
       currentlyHoveredNote = items[isOnNote];
     }
-    updatePageSpecificContextItems()
+  }
+  
+  document.addEventListener('contextopen', (e) => {
+    getHoveredNote();
+    updatePageSpecificContextItems();
   });
   
   const modal = document.getElementById("new-note-modal");
@@ -65,19 +74,13 @@ let indexFunctions;
   const create_note = document.getElementById("new-note-modal-create");
   create_note.onclick = async () => {
     modal.classList.remove('active');
-  
-    // http://www.leakon.com/archives/865
-    await Note.create(encodeURIComponent(new_note_name.value)
-      .replace(/%2F/g, '%252F')
-      .replace(/%5C/g, '%255C'));
+    
+    await Note.create(encodeURIComponent(new_note_name.value));
 
     note_element = note_template.cloneNode(true);
     note_element.children[1].innerText = new_note_name.value;
     note_element.onclick = () => {
-      // http://www.leakon.com/archives/865
-      location.replace('/note/'+encodeURIComponent(new_note_name.value)
-        .replace(/%2F/g, '%252F')
-        .replace(/%5C/g, '%255C'));
+      location.replace('/note/'+encodeURIComponent(new_note_name.value));
     };
     note_container.insertBefore(note_element, new_note);
   };
@@ -90,10 +93,7 @@ let indexFunctions;
   
   Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
     note.onclick = () => {
-      // http://www.leakon.com/archives/865
-      location.replace('/note/'+encodeURIComponent(note.children[1].innerText)
-        .replace(/%2F/g, '%252F')
-        .replace(/%5C/g, '%255C'));
+      location.replace('/note/'+encodeURIComponent(note.children[1].innerText));
     };
   });
   
@@ -112,12 +112,15 @@ let indexFunctions;
       currentlyHoveredNote.remove();
     }
   }
+  
   Array.from(document.getElementsByClassName('delete-note'))
     .map(delete_button => {
     delete_button.onclick = async e => {
       e.stopImmediatePropagation();
-      if (confirm("Delete this note?"))
+      if (confirm("Delete this note?")) {
+        getHoveredNote();
         await deleteNote();
+      }
     };
   });
 
