@@ -2,7 +2,6 @@ from replit import web
 import os
 import json
 import upload
-from urllib.parse import unquote
 from pathlib import Path
 from htmlmin import minify as htmlmin
 from rcssmin import cssmin
@@ -47,7 +46,7 @@ def before_request():
   elif web.auth.is_authenticated and not web.auth.name in permitted:
     abort(403, 'You are not permitted to access this software')
 
-#@app.after_request
+@app.after_request
 def after_request(response):
   minifiers = {
     'text/html': ('html', htmlmin),
@@ -73,7 +72,6 @@ def index():
 def view_note(note_name):
   filepath = f'./notes/{web.auth.name}.json'
   if os.path.exists(filepath):
-    note_name = unquote(note_name)
     try:
       old_json = json.loads(Path(filepath).read_text('utf-8'))
     except json.decoder.JSONDecodeError:
@@ -87,7 +85,6 @@ def view_note(note_name):
 @app.route('/note', methods=['POST'])
 @web.params('name')
 def create_note(name):
-  name = unquote(name)
   filepath = f'./notes/{web.auth.name}.json'
   if os.path.exists(f'./notes/{web.auth.name}.json'):
     try:
@@ -105,7 +102,6 @@ def create_note(name):
 @app.route('/note', methods=['DELETE'])
 @web.params('name')
 def delete_note(name):
-  name = unquote(name)
   filepath = f'./notes/{web.auth.name}.json'
   if os.path.exists(f'./notes/{web.auth.name}.json'):
     try:
@@ -125,7 +121,6 @@ def delete_note(name):
 def edit_note(name, text):
   filepath = f'./notes/{web.auth.name}.json'
   if os.path.exists(filepath):
-    name = unquote(name)
     try:
       old_json = json.loads(Path(filepath).read_text('utf-8'))
     except json.decoder.JSONDecodeError:
@@ -139,7 +134,6 @@ def edit_note(name, text):
 @app.route('/note/fetch', methods=['POST'])
 @web.params("name")
 def fetch_note(name):
-  name = unquote(name)
   filepath = f'./notes/{web.auth.name}.json'
   if os.path.exists(filepath):
     try:
