@@ -1,4 +1,6 @@
-from flask import request, send_from_directory
+from flask import request, abort, send_file
+from io import BytesIO
+from PIL import Image
 from replit import web
 import subprocess
 import os
@@ -12,7 +14,7 @@ def purge_unused_images():
   
   print("{}% of storage used".format(used_percentage*100))
 
-  if used_percentage > 0.5:
+  if used_percentage > 0.1:
     for root, dirs, files in os.walk('./uploads'):
       for file in files:
         if file.endswith('.webp'):
@@ -27,19 +29,20 @@ def purge_unused_images():
                   print(f'Removed {file}')
                   break
 
+FORMAT_TABLE = {
+  'jpg': ('JPEG', 'image/jpeg'),
+  'png': ('PNG', 'image/png'),
+  'webp': ('WEBP', 'image/webp'),
+}
+
 def init(app):
+  global FORMAT_TABLE
+  
   purge_unused_images()
   
   def make_user_upload_folder():
     if not os.path.exists(f'./uploads/{web.auth.name}'):
       os.mkdir(f'./uploads/{web.auth.name}')
-  
-  def get_download(file):
-    if os.path.exists(f'./uploads/{web.auth.name}'):
-      return send_from_directory(f'./uploads/{web.auth.name}', f'{file}.webp', as_attachment=True)
-    else:
-      os.mkdir(f'./uploads/{web.auth.name}')
-      return {'success': False, 'message': 'Image with UUID {} does not exist'.format(file)}
   
   @app.route('/image', methods=['POST'])
   def upload():
@@ -56,8 +59,22 @@ def init(app):
     if os.path.exists(path):
       os.remove(path)
       return {'success': True}
-    return {'success': False, 'message': 'Image with UUID {} does not exist'.format(image_uuid)}
+    abort(404, 'Image with UUID {} does not exist'.format(image_uuid))
   
   @app.route('/image/<path:path>')
   def download(path):
-    return get_download(path)
+    file_format = request.args.get('format')
+    
+    if file_format in (None, 'webp', 'png', 'jpg'):
+      converted_image = BytesIO()
+      
+      Image.open(f'./uploads/{web.auth.name}/{path}.webp').save(
+        converted_image, FORMAT_TABLE.get(
+          format, ('WEBP', 'image/webp'))[0])
+      converted_image.seek(0)
+      
+      converted_image.name = f'{path[:-5]}.{file_format}'
+      return send_file(converted_image, mimetype=FORMAT_TABLE.get(file_format, ('WEBP', 'image/webp'))[1])
+    else:
+      abort(415, '{} is not an accepted image format')
+  

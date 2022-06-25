@@ -1,3 +1,4 @@
+let indexFunctions;
 (async () => {
   const notes = await Note.list();
   let currentlyHoveredNote;
@@ -17,9 +18,9 @@
 
   const noteSpecificContextItems = [
     document.getElementById('copy-note-name'),
-    document.getElementById('delete-note')
+    document.getElementById('delete-note'),
   ];
-  function updateNoteSpecificContextItems() {
+  function updatePageSpecificContextItems() {
     noteSpecificContextItems.map(contextItem => {
       if (currentlyHoveredNote) {
         contextItem.style.display = 'block';
@@ -43,7 +44,7 @@
     } else {
       currentlyHoveredNote = items[isOnNote];
     }
-    updateNoteSpecificContextItems()
+    updatePageSpecificContextItems()
   });
   
   const modal = document.getElementById("new-note-modal");
@@ -83,19 +84,23 @@
       location.replace('/note/'+note.children[1].innerText);
     };
   });
-})();
-function copyNoteName() {
-  if (currentlyHoveredNote) {
-    navigator.clipboard.writeText(currentlyHoveredNote.children[1].innerText)
-      .catch(err => {
-        console.error(err);
-      });
+  function copyNoteName() {
+    if (currentlyHoveredNote) {
+      navigator.clipboard.writeText(currentlyHoveredNote.children[1].innerText)
+        .catch(err => {
+          console.error(err);
+        });
+    }
   }
-}
+  
+  async function deleteNote() {
+    if (currentlyHoveredNote) {
+      await (new Note(currentlyHoveredNote.children[1].innerText)).delete();
+      currentlyHoveredNote.remove();
+    }
+  }
 
-async function deleteNote() {
-  if (currentlyHoveredNote) {
-    await (new Note(currentlyHoveredNote.children[1].innerText)).delete();
-    currentlyHoveredNote.remove();
-  }
-}
+  return {copyNoteName: copyNoteName, deleteNote: deleteNote}
+})().then(_indexFunctions => {
+  indexFunctions = _indexFunctions;
+});

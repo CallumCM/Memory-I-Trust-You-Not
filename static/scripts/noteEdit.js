@@ -47,7 +47,15 @@ const editor = new Quill('#editor', {
   theme: 'snow'
 });
 
-editor.on("text-change", (delta, oldDelta, source) => {
+editor.on("text-change", async (delta, oldDelta, source) => {
+  currentNote.edit(editor.root.innerHTML);
+  saved.innerText = "(Unsaved)";
+  if (unsavedEdits >= 118 || Date.now() - savedLast > 5000) {
+    await save();
+  } else {  
+    unsavedEdits++;
+  }
+  
   if (source === "user") {
 
     // Image deletion
@@ -86,12 +94,15 @@ const currentNote = new Note(
 ((oldContextCopy) => {
   contextCopy = () => {
     const selection = editor.getSelection(true);
+    
     if (selection) {
       const contentDelta = editor.getContents(selection.index, selection.length);
+      
       if (typeof contentDelta.ops[0].insert === 'object' && 'image' in contentDelta.ops[0].insert) {
         const img = document.createElement('img');
         img.src = contentDelta.ops[0].insert.image;
         copyImage(img)
+        
       } else {
         navigator.clipboard.writeText(editor.getText(selection.index, selection.length))
           .catch(err => {
@@ -126,16 +137,6 @@ async function save() {
   }
 }
 
-editor.on('text-change', async (delta, source) => {
-  currentNote.edit(editor.root.innerHTML);
-  saved.innerText = "(Unsaved)";
-  if (unsavedEdits >= 118 || Date.now() - savedLast > 5000) {
-    await save();
-  } else {  
-    unsavedEdits++;
-  }
-});
-
 let savedCopy = editor.root.innerHTML;
 setInterval(async () => {
   await save();
@@ -151,3 +152,33 @@ document.addEventListener('keydown', async e => {
     await save();
   }
 });
+
+let selectedImage;
+const pageSpecificContextItems = [
+  document.getElementById('save-image'),
+];
+function updatePageSpecificContextItems() {
+  pageSpecificContextItems.map(contextItem => {
+    const selection = editor.getSelection(true);
+    if (selection) {
+      const contentDelta = editor.getContents(selection.index, selection.length);
+
+      try {
+        if ('image' in contentDelta.ops[0].insert) {
+          selectedImage = contentDelta.ops[0].insert.image;
+        }
+      } catch {}
+    }
+    if (selectedImage) {
+      contextItem.style.display = 'block';
+    } else {
+      contextItem.style.display = 'none';
+    }
+  });
+}
+
+function saveImage() {
+  location.href = selectedImage+'?format=png';
+}
+
+document.addEventListener('contextopen', updatePageSpecificContextItems);
