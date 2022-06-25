@@ -2,13 +2,16 @@
   const notes = await Note.list();
   let currentlyHoveredNote;
   const note_container = document.getElementById('notes');
-  const note_template = note_container.children[0];
+  
+  const note_template = document.getElementById('note-template');
+  note_template.id = "";
+  
   const new_note = document.getElementById('new-note');
   let note;
   let note_element;
   for (let name of notes) {
     note_element = note_template.cloneNode(true);
-    note_element.children[0].innerText = name;
+    note_element.children[1].innerText = name;
     note_container.insertBefore(note_element, new_note);
   }
 
@@ -60,9 +63,9 @@
     modal.style.display = "none";
   
     await Note.create(new_note_name.value);
-    
+
     note_element = note_template.cloneNode(true);
-    note_element.children[0].innerText = new_note_name.value;
+    note_element.children[1].innerText = new_note_name.value;
     note_element.onclick = () => {
       location.replace('/note/'+new_note_name.value);
     };
@@ -77,13 +80,13 @@
   
   Array.from(document.getElementsByClassName('note')).slice(1).map(note => {
     note.onclick = () => {
-      location.replace('/note/'+note.children[0].innerText);
+      location.replace('/note/'+note.children[1].innerText);
     };
   });
 })();
 function copyNoteName() {
   if (currentlyHoveredNote) {
-    navigator.clipboard.writeText(currentlyHoveredNote.children[0].innerText)
+    navigator.clipboard.writeText(currentlyHoveredNote.children[1].innerText)
       .catch(err => {
         console.error(err);
       });
@@ -92,7 +95,7 @@ function copyNoteName() {
 
 async function deleteNote() {
   if (currentlyHoveredNote) {
-    await (new Note(currentlyHoveredNote.children[0].innerText)).delete();
+    await (new Note(currentlyHoveredNote.children[1].innerText)).delete();
     currentlyHoveredNote.remove();
   }
 }

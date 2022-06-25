@@ -44,7 +44,9 @@
   border-radius: 5px;
   user-select: none;
 }
-
+.notes > div > span{
+  top: -1rem;
+}
 .notes > *:hover {
   margin-bottom: 0;
   padding: calc(var(--note-padding) * 2);
@@ -65,4 +67,11 @@ input[type="text"] {
 }
 #new-note-modal-create {
   padding: 1rem 2rem;
+}
+.delete-note {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  margin-bottom: auto;
+  margin-left: auto;
 }

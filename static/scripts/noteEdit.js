@@ -1,31 +1,77 @@
-const editorOptions = [
-  ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+ const editorOptions = [
+  ['bold', 'italic', 'underline', 'strike'],
   ['blockquote'],
 
-  [{ 'header': 1 }, { 'header': 2 }], // custom button values
+  [{ 'header': 1 }, { 'header': 2 }],
   [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-  [{ 'script': 'sub'}, { 'script': 'super' }], // superscript/subscript
-  [{ 'indent': '-1'}, { 'indent': '+1' }], // outdent/indent
-  [{ 'direction': 'rtl' }],  // text direction
+  [{ 'script': 'sub'}, { 'script': 'super' }],
+  [{ 'indent': '-1'}, { 'indent': '+1' }],
+  [{ 'direction': 'rtl' }],
 
-  [{ 'size': ['small', false, 'large', 'huge'] }], // custom dropdown
-  [ 'link', 'image', 'video', 'formula' ], // image support
-  [{ 'color': [] }, { 'background': [] }], // dropdown with defaults from theme
+  [{ 'size': ['small', false, 'large', 'huge'] }],
+  [ 'link', 'image', 'video'],
+  [{ 'color': [] }, { 'background': [] }],
   [{ 'font': [] }],
   [{ 'align': [] }],
 
-  ['clean'] // remove formatting button
+  ['clean']
 ];
 
 Quill.register('modules/blotFormatter', QuillBlotFormatter.default);
+Quill.register("modules/imageCompressor", imageCompressor);
 
 const editor = new Quill('#editor', {
   modules: {
     'toolbar': editorOptions,
-    'imageDrop': true,
-    'blotFormatter': {}
+    'blotFormatter': {},
+    'imageCompressor': {
+      quality: 0.9,
+      maxWidth: 1080,
+      maxHeight: 810,
+      imageType: 'image/webp',
+      insertIntoEditor: (url, blob) => {
+        const formData = new FormData();
+        formData.append("file", blob);
+        fetch("/image", {method: "POST", body: formData})
+          .then(response => response.text())
+          .then(result => {
+            const range = editor.getSelection();
+            editor.insertEmbed(range.index, "image", `${result}`, "user");
+          })
+          .catch(error => {
+            console.error("Error:", error);
+          });
+      }
+    }
   },
   theme: 'snow'
+});
+
+editor.on("text-change", (delta, oldDelta, source) => {
+  if (source === "user") {
+
+    // Image deletion
+    const currrentContents = editor.getContents();
+    const diff = currrentContents.diff(oldDelta);
+    let isDeletingImage;
+    let op;
+
+    for (let i = 0; i < diff.ops.length; i++) {
+      op = diff.ops[i];
+      if (typeof op.insert === 'object' && Object.keys(op.insert).includes('image')) {
+        isDeletingImage = i;
+        break;
+      }
+    }
+    if (isDeletingImage) {
+      if (confirm("Permanently delete this image?")) {
+        const imageUUID = diff.ops[isDeletingImage].insert.image.split('/').slice(-1);
+        apiRequest('/image', {'image_uuid': imageUUID}, 'DELETE');
+      } else {
+        editor.history.undo();
+      }
+    }
+  }
 });
 
 const saved = document.getElementById('saved');
@@ -71,10 +117,13 @@ function copyImage(img) {
 }
 
 async function save() {
-  saved.innerText = "(Saved)";
-  savedLast = Date.now();
-  unsavedEdits = 0;
-  await currentNote.save();
+  if (savedCopy != editor.root.innerHTML) {
+    savedCopy = editor.root.innerHTML;
+    saved.innerText = "(Saved)";
+    savedLast = Date.now();
+    unsavedEdits = 0;
+    await currentNote.save();
+  }
 }
 
 editor.on('text-change', async (delta, source) => {
@@ -88,7 +137,7 @@ editor.on('text-change', async (delta, source) => {
 });
 
 let savedCopy = editor.root.innerHTML;
-setTimeout(async () => {
+setInterval(async () => {
   await save();
 }, 3000);
 

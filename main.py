@@ -1,6 +1,7 @@
 from replit import web
 import os
 import json
+import upload
 from urllib.parse import unquote
 from pathlib import Path
 from htmlmin import minify as htmlmin
@@ -28,8 +29,6 @@ ratelimit = web.per_user_ratelimit(
 )
 permitted = (
   'turnip123',
-  'JonahKC',
-  'SucculentCactus',
 )
 always_allowed = (
   '/static/styles/style.css',
@@ -160,6 +159,8 @@ def list_notes():
       old_json = {}
     return json.dumps(list(old_json.keys()))
   return '[]'
+
+upload.init(app)
 
 if __name__ == '__main__':
   web.run(app)

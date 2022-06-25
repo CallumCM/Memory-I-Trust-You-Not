@@ -10,12 +10,10 @@ name = "python-template"
 version = "0.1.0"
 [tool.poetry.dependencies]
 Flask = "^2.1.2"
-Pillow = "^9.1.1"
 htmlmin = "^0.1.12"
 jsmin = "^3.0.1"
 numpy = "^1.22.2"
 python = "^3.8"
 rcssmin = "^1.1.0"
 replit = "^3.2.4"
-google-api-python-client = "^2.51.0"
 [tool.poetry.dev-dependencies]
