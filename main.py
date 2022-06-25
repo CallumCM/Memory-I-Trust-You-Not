@@ -29,6 +29,7 @@ ratelimit = web.per_user_ratelimit(
 )
 permitted = (
   'turnip123',
+  'SucculentCactus'
 )
 always_allowed = (
   '/static/styles/style.css',
