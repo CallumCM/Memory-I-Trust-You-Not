@@ -1,9 +1,35 @@
 from flask import request, send_from_directory
 from replit import web
+import subprocess
 import os
 import uuid
 
+def purge_unused_images():
+
+  # Huge scary monster to get free space in repl, in megabytes
+  # and then convert it to a percentage of total space from 0-1
+  used_percentage = int(str(subprocess.Popen('du -sh ~/$REPL_SLUG',stdout=subprocess.PIPE, shell=True).communicate()[0].strip(), 'utf-8').split('\t')[0][:-1]) / 1024
+  
+  print("{}% of storage used".format(used_percentage*100))
+
+  if used_percentage > 0.5:
+    for root, dirs, files in os.walk('./uploads'):
+      for file in files:
+        if file.endswith('.webp'):
+          for json_file in os.listdir('./notes'):
+            if json_file.endswith('.json'):
+              with open(f'./notes/{json_file}', 'r') as f:
+                data = f.read()
+                if file[:-5] in data:
+                  continue
+                else:
+                  os.remove(f'./uploads/{json_file[:-5]}/{file}')
+                  print(f'Removed {file}')
+                  break
+
 def init(app):
+  purge_unused_images()
+  
   def make_user_upload_folder():
     if not os.path.exists(f'./uploads/{web.auth.name}'):
       os.mkdir(f'./uploads/{web.auth.name}')
