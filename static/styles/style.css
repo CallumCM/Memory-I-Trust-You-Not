@@ -36,6 +36,8 @@ body {
 .title, h1 {
   font-size: 3rem;
   font-weight: bold;
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
 }
 label.checkbox-label {
   display: block;

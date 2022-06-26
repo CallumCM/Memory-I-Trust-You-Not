@@ -2,6 +2,7 @@ from replit import web
 from urllib.parse import quote, unquote
 import os
 import json
+import subprocess
 import upload
 from pathlib import Path
 from htmlmin import minify as htmlmin
@@ -51,7 +52,7 @@ def before_request():
   elif web.auth.is_authenticated and not web.auth.name in permitted:
     abort(403, 'You are not permitted to access this software')
 
-#@app.after_request
+@app.after_request
 def after_request(response):
   minifiers = {
     'text/html': ('html', htmlmin),
@@ -71,7 +72,7 @@ def after_request(response):
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+  return render_template('index.html', storage_used=str(round(int(str(subprocess.Popen('du -sh ~/$REPL_SLUG',stdout=subprocess.PIPE, shell=True).communicate()[0].strip(), 'utf-8').split('\t')[0][:-1])/1024*100, 2)))
 
 @app.route('/sw.js')
 def serviceworker():
