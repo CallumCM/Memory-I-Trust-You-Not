@@ -1,4 +1,4 @@
-const OFFLINE_VERSION = 3;
+const OFFLINE_VERSION = 4;
 const OFFLINE_CACHE_KEY = 'offline' + OFFLINE_VERSION;
 const FILES_TO_CACHE = ['/static/scripts/login.js',
   '/static/scripts/theme.js',
@@ -40,9 +40,6 @@ self.addEventListener('activate', function(event) {
 self.addEventListener('fetch', (e) => {
   e.respondWith((async () => {
       const r = await caches.match(e.request);
-      console.log(
-        `[Service Worker] Fetching resource: ${e.request.url}`
-        );
       if (r) {
         return r;
       }
@@ -50,24 +47,8 @@ self.addEventListener('fetch', (e) => {
         const response = await fetch(e.request);
         return response;
       } catch (error) {
-        console.log(
-          `[Service Worker] Error fetching resource: ${e.request.url}`
-          );
-      } else {
-        return new Response(`
-          <style>
-            * {
-              background: #22232f;
-              text-align: center;
-            }
-          </style>
-          <h1>Oops! It looks like the page you were looking for wasn't cached :/</h1>
-        `, {
-          headers: {
-            'Content-Type': 'text/html'
-          },
-        });
+        console.error(
+          `[Service Worker] Error fetching resource: ${e.request.url}`);
       }
-    }
-  })());
+    })());
 });
