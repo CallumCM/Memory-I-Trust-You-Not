@@ -178,7 +178,7 @@ function updatePageSpecificContextItems() {
 }
 
 function saveImage() {
-  location.href = selectedImage+'?format=png';
+  window.open(selectedImage+'?format=png', '_blank');
 }
 
 document.addEventListener('contextopen', updatePageSpecificContextItems);

@@ -1,4 +1,4 @@
-const OFFLINE_VERSION = 4;
+const OFFLINE_VERSION = 6;
 const OFFLINE_CACHE_KEY = 'offline' + OFFLINE_VERSION;
 const FILES_TO_CACHE = ['/static/scripts/login.js',
   '/static/scripts/theme.js',
